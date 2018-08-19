@@ -63,7 +63,7 @@ func (reader *chunkReader) Read(f func(*Chunk)) error {
 	}
 
 	for {
-		if chunk, readError = reader.GetNextChunk(DefaultReadSize); readError != nil {
+		if chunk, readError = reader.GetNextChunk(reader.GetReadSize()); readError != nil {
 			break
 		}
 
