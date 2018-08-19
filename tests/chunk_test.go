@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"ftp/core/reader"
+	"ftp/core/file"
 	"math"
 	"os"
 	"path"
@@ -19,13 +19,13 @@ var dataDir, _ = filepath.Abs("./data")
 
 func TestNewChunkReader(t *testing.T) {
 	// It should return an error if the file doesn't exist.
-	_, err := reader.NewChunkReader(path.Join(dataDir, "idontexist"))
+	_, err := file.NewChunkReader(path.Join(dataDir, "idontexist"))
 	if err == nil || !os.IsNotExist(err) {
 		t.Fatalf("Expected to receive not exists error, instead received %s", err)
 	}
 
 	// It should not return an error when provided a valid file path.
-	chunkReader, err := reader.NewChunkReader(path.Join(dataDir, WordsFile))
+	chunkReader, err := file.NewChunkReader(path.Join(dataDir, WordsFile))
 	defer chunkReader.Close()
 
 	if err != nil {
@@ -113,7 +113,7 @@ func TestRead(t *testing.T) {
 	var expectedChunks = math.Ceil(float64(stat.Size()) / float64(chunkReader.GetReadSize()))
 	var actualChunks = 0.0
 
-	err = chunkReader.Read(func(chunk *reader.Chunk) {
+	err = chunkReader.Read(func(chunk *file.Chunk) {
 		actualChunks += 1
 	})
 
@@ -126,12 +126,12 @@ func TestRead(t *testing.T) {
 	}
 }
 
-func getWordsChunkReader(t *testing.T) reader.ChunkReaderInterface {
+func getWordsChunkReader(t *testing.T) file.ChunkReaderInterface {
 	return getChunkReader(path.Join(dataDir, WordsFile), t)
 }
 
-func getChunkReader(filePath string, t *testing.T) reader.ChunkReaderInterface {
-	chunkReader, err := reader.NewChunkReader(filePath)
+func getChunkReader(filePath string, t *testing.T) file.ChunkReaderInterface {
+	chunkReader, err := file.NewChunkReader(filePath)
 
 	if err != nil {
 		t.Fatalf("Failed to create chunkReader: %s", err)
