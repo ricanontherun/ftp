@@ -1,18 +1,18 @@
 package tests
 
 import (
-	"testing"
-	"path/filepath"
 	"ftp/core/reader"
-	"path"
-	"os"
 	"math"
+	"os"
+	"path"
+	"path/filepath"
+	"testing"
 )
 
 const (
-	WordsFile string = "words"
+	WordsFile      string = "words"
 	FirstFiveBytes string = "Lorem"
-	NextSixBytes string = " ipsum"
+	NextSixBytes   string = " ipsum"
 )
 
 var dataDir, _ = filepath.Abs("./data")

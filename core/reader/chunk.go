@@ -1,9 +1,9 @@
 package reader
 
 import (
+	"io"
 	"os"
 	"syscall"
-	"io"
 )
 
 const (
@@ -27,15 +27,15 @@ type ChunkReaderInterface interface {
 
 type Chunk struct {
 	Data []byte
-	Len int
+	Len  int
 }
 
 type chunkReader struct {
-	filePath string
+	filePath   string
 	fileHandle *os.File
-	fileStat *syscall.Stat_t
-	readSize uint64
-	opts ChunkReaderOpts
+	fileStat   *syscall.Stat_t
+	readSize   uint64
+	opts       ChunkReaderOpts
 }
 
 func NewChunkReader(filePath string) (ChunkReaderInterface, error) {
@@ -46,15 +46,15 @@ func NewChunkReader(filePath string) (ChunkReaderInterface, error) {
 	}
 
 	reader := &chunkReader{
-		filePath: filePath,
+		filePath:   filePath,
 		fileHandle: file,
-		readSize: DefaultReadSize,
+		readSize:   DefaultReadSize,
 	}
 
 	return reader, nil
 }
 
-func (reader * chunkReader) Read(f func(*Chunk)) error {
+func (reader *chunkReader) Read(f func(*Chunk)) error {
 	var chunk *Chunk = nil
 	var readError error = nil
 
@@ -77,10 +77,10 @@ func (reader * chunkReader) Read(f func(*Chunk)) error {
 	return readError
 }
 
-func (reader * chunkReader) GetNextChunk(readBytes uint64) (*Chunk, error) {
+func (reader *chunkReader) GetNextChunk(readBytes uint64) (*Chunk, error) {
 	chunk := &Chunk{
 		Data: make([]byte, readBytes),
-		Len: 0,
+		Len:  0,
 	}
 
 	bytesRead, err := reader.fileHandle.Read(chunk.Data)
@@ -93,7 +93,7 @@ func (reader * chunkReader) GetNextChunk(readBytes uint64) (*Chunk, error) {
 	return chunk, nil
 }
 
-func (reader * chunkReader) Close() {
+func (reader *chunkReader) Close() {
 	if reader.fileHandle != nil {
 		reader.fileHandle.Close()
 	}
