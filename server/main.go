@@ -9,7 +9,12 @@ import (
 )
 
 func main() {
-	server := &comm.FtpServer{}
+	server, serverErr := comm.NewServer()
+
+	if serverErr != nil {
+		log.Fatalf("Failed to start FTP server, err: %s", serverErr)
+	}
+
 	rpc.Register(server)
 	rpc.HandleHTTP()
 

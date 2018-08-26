@@ -1,6 +1,7 @@
 package comm
 
 type ClientInterface interface {
-	Connect() error
+	MakeSession(*SessionOptions) (*TransferSession, error)
+	Transfer(TransferOptions) error
 	Close() error
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"ftp/core/comm"
 	"log"
 	"os"
@@ -71,25 +70,34 @@ func parseClientArguments() (map[string]string, error) {
 	return argMap, nil
 }
 
-func main() {
-	args, err := parseClientArguments()
+func performSend(args map[string]string) error {
+	// Collect some metadata on the file transfer. Size, chunks, chunkSize etc.
+	// This will be used by the server to establish a connection session.
 
-	if err != nil {
-		fmt.Printf("Error: %s\n", err)
-		os.Exit(1)
-	}
-
-	fmt.Println(args)
-	return
-
+	// Connect to the server.
 	client, err := comm.Connect(comm.ConnectionOptions{
-		Host: "localhost",
-		Port: 33344,
+		Target: args["target"],
 	})
 
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
 
-	client.Connect()
+	// Transfer the file.
+	return client.Transfer(comm.TransferOptions{
+		Source:      args["sourcePath"],
+		Destination: args["destinationPath"],
+	})
+}
+
+func main() {
+	args, parseError := parseClientArguments()
+
+	if parseError != nil {
+		log.Fatalf("Failed to parse command: %s\n", parseError)
+	}
+
+	if sendErr := performSend(args); sendErr != nil {
+		log.Fatalln(sendErr)
+	}
 }
